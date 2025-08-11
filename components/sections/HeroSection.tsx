@@ -22,6 +22,16 @@ export default function HeroSection() {
     return () => clearInterval(timer)
   }, [])
 
+  // 安全的滚动函数
+  const scrollToSection = (selector: string) => {
+    if (typeof window !== 'undefined') {
+      const element = document.querySelector(selector)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+  }
+
   return (
     <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 w-full">
@@ -60,7 +70,7 @@ export default function HeroSection() {
                   className="bg-primary-800 text-white px-8 py-4 font-medium hover-lift"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => document.querySelector('#works')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => scrollToSection('#works')}
                 >
                   查看作品
                 </motion.button>
@@ -69,7 +79,7 @@ export default function HeroSection() {
                   className="border border-primary-300 text-primary-700 px-8 py-4 font-medium hover-lift"
                   whileHover={{ scale: 1.05, borderColor: '#495057' }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => scrollToSection('#contact')}
                 >
                   联系我
                 </motion.button>
@@ -158,7 +168,7 @@ export default function HeroSection() {
             className="absolute bottom-10 left-1/2 transform -translate-x-1/2 cursor-pointer"
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            onClick={() => document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => scrollToSection('#about')}
           >
             <div className="flex flex-col items-center space-y-2 text-primary-400">
               <span className="text-sm font-medium">向下滚动</span>

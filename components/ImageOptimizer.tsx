@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface ImageOptimizerProps {
@@ -31,19 +31,31 @@ export default function ImageOptimizer({
 }: ImageOptimizerProps) {
   const [isLoaded, setIsLoaded] = useState(false)
   const [isError, setIsError] = useState(false)
+  const [clientBlurDataURL, setClientBlurDataURL] = useState<string>('')
 
-  // 生成模糊占位符
-  const generateBlurDataURL = (w: number, h: number) => {
-    const canvas = document.createElement('canvas')
-    canvas.width = w
-    canvas.height = h
-    const ctx = canvas.getContext('2d')
-    if (ctx) {
-      ctx.fillStyle = '#f3f4f6'
-      ctx.fillRect(0, 0, w, h)
+  // 在客户端生成模糊占位符
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !blurDataURL) {
+      const generateBlurDataURL = (w: number, h: number) => {
+        try {
+          const canvas = document.createElement('canvas')
+          canvas.width = w
+          canvas.height = h
+          const ctx = canvas.getContext('2d')
+          if (ctx) {
+            ctx.fillStyle = '#f3f4f6'
+            ctx.fillRect(0, 0, w, h)
+          }
+          return canvas.toDataURL()
+        } catch (error) {
+          console.warn('无法生成占位符:', error)
+          return ''
+        }
+      }
+      
+      setClientBlurDataURL(generateBlurDataURL(width, height))
     }
-    return canvas.toDataURL()
-  }
+  }, [width, height, blurDataURL])
 
   const handleLoad = () => {
     setIsLoaded(true)
@@ -99,7 +111,7 @@ export default function ImageOptimizer({
         height={height}
         priority={priority}
         placeholder={placeholder}
-        blurDataURL={blurDataURL || (width && height ? generateBlurDataURL(width, height) : undefined)}
+        blurDataURL={blurDataURL || clientBlurDataURL || undefined}
         onLoad={handleLoad}
         onError={handleError}
         className={`transition-all duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${

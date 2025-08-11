@@ -24,9 +24,12 @@ export default function Navigation() {
   ]
 
   const scrollToSection = (href: string) => {
-    const element = document.querySelector(href)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
+    // 添加客户端检查
+    if (typeof window !== 'undefined') {
+      const element = document.querySelector(href)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
     }
     setIsMobileMenuOpen(false)
   }
